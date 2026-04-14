@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dev os 1 official demo</title>
+  <style>
+body {
+  margin: 0;
+  background: #0f1117;
+  color: #e6edf3;
+  font-family: Inter, Arial, sans-serif;
+}
+
+.content-box {
+  margin: 40px auto;
+  max-width: 700px;
+  padding: 24px;
+  background: #161a22;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+h1 {
+  margin-top: 0;
+}
+  </style>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEV OS 1 - Pro Demo</title>
+    <style>
+        :root {
+            --gold: #FFD700;
+            --glass: rgba(15, 15, 15, 0.95);
+            --border: 1px solid rgba(255, 215, 0, 0.4);
+            --neo-bg: linear-gradient(135deg, #000000 0%, #1a1a1a 40%, #2c240a 100%);
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%; width: 100%;
+            background: var(--neo-bg); color: var(--gold);
+            font-family: 'Segoe UI', sans-serif; overflow: hidden; user-select: none;
+        }
+
+        /* --- BOOT SCREEN --- */
+        #boot-screen {
+            position: fixed; inset: 0; background: #000;
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 10000; transition: opacity 0.5s;
+        }
+        .boot-logo { font-size: 45px; letter-spacing: 12px; margin-bottom: 20px; font-weight: bold; }
+        .loader-track { width: 220px; height: 3px; background: #1a1a1a; border-radius: 10px; }
+        .loader-fill { width: 0%; height: 100%; background: var(--gold); transition: width 0.1s; }
+
+        /* --- DESKTOP --- */
+        #desktop { position: absolute; inset: 0; padding: 100px 30px; display: flex; flex-direction: column; gap: 20px; z-index: 10; flex-wrap: wrap; align-content: flex-start; }
+        .desktop-item { width: 90px; text-align: center; cursor: pointer; padding: 10px; border-radius: 12px; transition: 0.2s; }
+        .desktop-item:hover { background: rgba(255, 215, 0, 0.15); }
+        .desktop-item span { display: block; font-size: 40px; margin-bottom: 8px; }
+        .desktop-item label { font-size: 12px; color: white; text-shadow: 1px 1px 3px black; pointer-events: none; }
+
+        /* --- WINDOWS --- */
+        .window, .system-panel {
+            position: absolute; background: var(--glass);
+            border: var(--border); border-radius: 15px; display: none; 
+            backdrop-filter: blur(25px); box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+            z-index: 100;
+        }
+        .window { width: 550px; height: 380px; flex-direction: column; overflow: hidden; }
+        .win-header { padding: 12px 18px; background: rgba(255,215,0,0.1); display: flex; justify-content: space-between; align-items: center; cursor: move; border-bottom: 1px solid rgba(255,215,0,0.1); }
+        .win-body { flex: 1; padding: 20px; overflow-y: auto; color: #fff; }
+        .close-btn { background: #ff5555; width: 14px; height: 14px; border-radius: 50%; cursor: pointer; border: none; }
+
+        /* --- SYSTEM PANELS --- */
+        #quick-settings { bottom: 95px; right: 20px; width: 300px; padding: 20px; }
+        #notif-center { top: 75px; left: 20px; width: 320px; padding: 20px; }
+        .panel-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+
+        /* --- TASKBAR --- */
+        #taskbar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); height: 65px; background: var(--glass); border: var(--border); border-radius: 35px; display: flex; align-items: center; padding: 0 25px; gap: 20px; z-index: 2000; }
+        .start-btn { width: 45px; height: 45px; background: var(--gold); border-radius: 50%; color: #000; display: flex; justify-content: center; align-items: center; font-weight: 900; cursor: pointer; border: none; }
+        .task-icon { font-size: 26px; cursor: pointer; transition: 0.3s; }
+        .task-icon:hover { transform: translateY(-8px); }
+
+        .pill { position: fixed; top: 20px; background: var(--glass); border: var(--border); padding: 8px 20px; border-radius: 20px; font-size: 14px; z-index: 2000; cursor: pointer; }
+        #clock-pill { left: 20px; }
+        #status-pill { right: 20px; }
+
+        /* --- APP LAUNCHER (MINT MENU) --- */
+        #mint-menu { 
+            position: fixed; bottom: 95px; left: 20px; width: 420px; height: 500px;
+            background: var(--glass); border: var(--border); border-radius: 20px; 
+            display: none; padding: 0; z-index: 3000; overflow: hidden;
+            grid-template-columns: 70px 1fr;
+        }
+        .menu-sidebar { background: rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 20px; border-right: 1px solid rgba(255,215,0,0.1); }
+        .menu-main { padding: 20px; overflow-y: auto; }
+        .menu-search { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.2); background: rgba(0,0,0,0.3); color: white; margin-bottom: 15px; box-sizing: border-box; }
+        .menu-item { display: flex; align-items: center; gap: 15px; padding: 10px; border-radius: 10px; cursor: pointer; font-size: 14px; color: #ccc; }
+        .menu-item:hover { background: rgba(255,215,0,0.15); color: var(--gold); }
+
+        #context-menu { position: fixed; background: #111; border: var(--border); border-radius: 8px; width: 160px; display: none; z-index: 5000; padding: 5px; }
+        .ctx-item { padding: 10px; cursor: pointer; border-radius: 5px; }
+        .ctx-item:hover { background: var(--gold); color: #000; }
+    </style>
+</head>
+<body oncontextmenu="return handleRightClick(event)">
+
+    <div id="boot-screen">
+        <div class="boot-logo">DEV OS 1</div>
+        <div class="loader-track"><div id="load-bar" class="loader-fill"></div></div>
+    </div>
+
+    <div id="clock-pill" class="pill" onclick="toggleElement('notif-center')">00:00 | Loading...</div>
+    <div id="status-pill" class="pill" onclick="toggleElement('quick-settings')">📶 🔋 ⚙️</div>
+
+    <div id="desktop">
+        <div class="desktop-item" onclick="toggleElement('files')"><span>📁</span><label>Home</label></div>
+        <div class="desktop-item" onclick="toggleElement('trash')"><span>🗑️</span><label>Trash</label></div>
+    </div>
+
+    <div id="mint-menu" class="system-panel" style="display: none; grid-template-columns: 70px 1fr;">
+        <div class="menu-sidebar">
+            <span>👤</span><span>📁</span><span>⚙️</span><span style="margin-top:auto">🔒</span>
+        </div>
+        <div class="menu-main">
+            <input type="text" class="menu-search" placeholder="Search Apps...">
+            <div class="menu-item" onclick="toggleElement('web')">🌐 Web Browser</div>
+            <div class="menu-item" onclick="toggleElement('files')">📁 File Manager</div>
+            <div class="menu-item" onclick="toggleElement('music')">🎵 Studio X Music</div>
+            <div class="menu-item" onclick="toggleElement('terminal')">💻 AX Terminal</div>
+            <div class="menu-item" onclick="toggleElement('calc')">🔢 Calculator</div>
+            <div class="menu-item" onclick="toggleElement('notes')">📝 Notepad</div>
+            <div class="menu-item" onclick="toggleElement('gallery')">🖼️ AX Gallery</div>
+            <div class="menu-item" onclick="toggleElement('code')">⌨️ AX Code Editor</div>
+            <div class="menu-item" onclick="toggleElement('weather')">☁️ Weather</div>
+            <div class="menu-item" onclick="toggleElement('store')">🛍️ App Store</div>
+            <div class="menu-item" onclick="toggleElement('settings')">⚙️ System Settings</div>
+            <div class="menu-item" onclick="toggleElement('tasks')">✅ Task Manager</div>
+        </div>
+    </div>
+
+    <div id="files" class="window" style="top:15%; left:20%;"><div class="win-header"><span>File Manager</span><button class="close-btn" onclick="toggleElement('files')"></button></div><div class="win-body"><h3>AX Home</h3><p>📁 Documents</p><p>📁 Downloads</p></div></div>
+    <div id="web" class="window" style="top:18%; left:22%;"><div class="win-header"><span>AX Browser</span><button class="close-btn" onclick="toggleElement('web')"></button></div><div class="win-body"><p>Browsing safely on AX-Net.</p></div></div>
+    <div id="music" class="window" style="top:21%; left:24%;"><div class="win-header"><span>Studio X</span><button class="close-btn" onclick="toggleElement('music')"></button></div><div class="win-body"><h3>Now Playing</h3><p>🎵 Neon Dreams - AX Tech</p></div></div>
+    <div id="terminal" class="window" style="top:24%; left:26%;"><div class="win-header"><span>AX Terminal</span><button class="close-btn" onclick="toggleElement('terminal')"></button></div><div class="win-body" style="background:#000; color:#0f0; font-family:monospace; height:100%;">ax@dev-os:~$ _</div></div>
+    <div id="calc" class="window" style="top:10%; left:40%; width:300px; height:400px;"><div class="win-header"><span>Calculator</span><button class="close-btn" onclick="toggleElement('calc')"></button></div><div class="win-body" style="text-align:right; font-size:24px;">0</div></div>
+    <div id="notes" class="window" style="top:30%; left:30%;"><div class="win-header"><span>Notepad</span><button class="close-btn" onclick="toggleElement('notes')"></button></div><div class="win-body"><textarea style="width:100%; height:90%; background:transparent; color:white; border:none; outline:none;" placeholder="Write something..."></textarea></div></div>
+    <div id="weather" class="window" style="top:15%; left:50%; width:250px;"><div class="win-header"><span>Weather</span><button class="close-btn" onclick="toggleElement('weather')"></button></div><div class="win-body"><h2>24°C</h2><p>Sunny in Nairobi</p></div></div>
+    <div id="settings" class="window" style="top:20%; left:40%;"><div class="win-header"><span>Settings</span><button class="close-btn" onclick="toggleElement('settings')"></button></div><div class="win-body"><h4>AX Kernel 2.4</h4><p>Accent: Gold</p></div></div>
+    <div id="trash" class="window" style="top:40%; left:10%;"><div class="win-header"><span>Trash</span><button class="close-btn" onclick="toggleElement('trash')"></button></div><div class="win-body"><p>Trash is empty.</p></div></div>
+    <div id="store" class="window" style="top:10%; left:10%; width:600px;"><div class="win-header"><span>App Store</span><button class="close-btn" onclick="toggleElement('store')"></button></div><div class="win-body"><h3>Featured</h3><p>📦 GIMP 2.1</p><p>📦 VLC Player</p></div></div>
+
+    <div id="quick-settings" class="system-panel">
+        <h3 style="margin-top:0">Control Center</h3>
+        <div class="panel-row"><span>Wi-Fi</span><button class="start-btn" style="width:auto; padding:5px 15px; border-radius:5px;">AX-5G</button></div>
+        <div class="panel-row"><span>Volume</span><input type="range"></div>
+        <div class="panel-row"><span>Brightness</span><input type="range" value="90"></div>
+    </div>
+
+    <div id="notif-center" class="system-panel">
+        <h3 style="margin-top:0">Notifications</h3>
+        <p style="font-size:12px; border-left:2px solid var(--gold); padding-left:10px;"><b>Security:</b> Firewall Active</p>
+    </div>
+
+    <div id="taskbar">
+        <button class="start-btn" onclick="toggleElement('mint-menu')">A</button>
+        <div class="task-icon" onclick="toggleElement('files')">📁</div>
+        <div class="task-icon" onclick="toggleElement('web')">🌐</div>
+        <div class="task-icon" onclick="toggleElement('music')">🎵</div>
+        <div class="task-icon" onclick="toggleElement('settings')">⚙️</div>
+    </div>
+
+    <div id="context-menu">
+        <div class="ctx-item" onclick="createNewFile()">New File</div>
+    </div>
+
+    <script>
+        // BOOT LOGIC
+        let load = 0;
+        const timer = setInterval(() => {
+            load += Math.floor(Math.random()*15);
+            document.getElementById('load-bar').style.width = load + '%';
+            if (load >= 100) {
+                clearInterval(timer);
+                setTimeout(() => document.getElementById('boot-screen').style.display = 'none', 500);
+            }
+        }, 150);
+
+        // UNIFIED LAYERED TOGGLE
+        let topZ = 1000;
+        function toggleElement(id) {
+            const el = document.getElementById(id);
+            if (el.style.display === 'flex' || el.style.display === 'grid' || el.style.display === 'block') {
+                el.style.display = 'none';
+            } else {
+                topZ++;
+                el.style.zIndex = topZ;
+                // Specific displays for specific layouts
+                if(id === 'mint-menu') el.style.display = 'grid';
+                else if(id.includes('win') || ['files','web','music','terminal','calc','notes','weather','settings','trash','store'].includes(id)) el.style.display = 'flex';
+                else el.style.display = 'block';
+            }
+            // Auto-hide menu when opening an app
+            if(id !== 'mint-menu' && !['quick-settings','notif-center'].includes(id)) {
+                document.getElementById('mint-menu').style.display = 'none';
+            }
+        }
+
+        // CLOCK
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock-pill').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + " | " + now.toLocaleDateString('en-GB', {day:'numeric', month:'short'});
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        // RIGHT CLICK
+        function handleRightClick(e) {
+            e.preventDefault();
+            const ctx = document.getElementById('context-menu');
+            ctx.style.display = 'block'; ctx.style.left = e.pageX + 'px'; ctx.style.top = e.pageY + 'px';
+            return false;
+        }
+
+        function createNewFile() {
+            const name = prompt("Name:");
+            if(name) {
+                const div = document.createElement('div'); div.className = 'desktop-item';
+                div.innerHTML = `<span>📄</span><label>${name}</label>`;
+                document.getElementById('desktop').appendChild(div);
+            }
+        }
+
+        // DRAGGING
+        let activeWin = null;
+        document.addEventListener('mousedown', (e) => {
+            document.getElementById('context-menu').style.display = 'none';
+            if (e.target.closest('.win-header')) {
+                activeWin = e.target.closest('.window');
+                topZ++; activeWin.style.zIndex = topZ;
+            }
+        });
+        document.addEventListener('mousemove', (e) => {
+            if (activeWin) {
+                activeWin.style.left = (e.pageX - 150) + 'px';
+                activeWin.style.top = (e.pageY - 20) + 'px';
+            }
+        });
+        document.addEventListener('mouseup', () => activeWin = null);
+    </script>
+</body>
+</html>
+  <script>
+// Tip: To see the Ramadan theme in action,
+// go to Settings > Appearance and select it!
+console.log("AX-Editor v2.0 Initialized.");
+  </script>
+</body>
+</html>
